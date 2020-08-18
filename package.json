@@ -1,0 +1,73 @@
+{
+    "name": "@matthewpi/paste",
+    "description": "",
+    "version": "0.0.1",
+    "license": "MIT",
+    "private": true,
+
+    "author": {
+        "name": "Matthew Penner",
+        "email": "me@matthewp.io",
+        "url": "https://matthewp.io"
+    },
+
+    "scripts": {
+        "clean": "rm dist/*.css dist/*.html dist/*.js dist/*.map -f",
+        "build": "yarn run clean && cross-env NODE_ENV=production webpack --hide-modules --config webpack.config.js",
+        "watch": "yarn run clean && cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config webpack.config.js",
+        "serve": "cross-env NODE_ENV=development webpack-dev-server --host 0.0.0.0 --hot --https --cert /mnt/c/Users/matthew/.ssl/krygon.test/fullchain.pem --key /mnt/c/Users/matthew/.ssl/krygon.test/privkey.pem"
+    },
+
+    "dependencies": {
+        "alpinejs": "^2.6.0",
+        "codemirror": "^5.56.0",
+        "normalize.css": "^8.0.1"
+    },
+
+    "devDependencies": {
+        "@babel/cli": "^7.10.5",
+        "@babel/core": "^7.11.1",
+        "@babel/plugin-proposal-class-properties": "^7.10.4",
+        "@babel/plugin-proposal-nullish-coalescing-operator": "^7.10.4",
+        "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
+        "@babel/plugin-proposal-optional-chaining": "^7.11.0",
+        "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+        "@babel/plugin-transform-arrow-functions": "^7.10.4",
+        "@babel/plugin-transform-async-to-generator": "^7.10.4",
+        "@babel/plugin-transform-computed-properties": "^7.10.4",
+        "@babel/plugin-transform-destructuring": "^7.10.4",
+        "@babel/plugin-transform-regenerator": "^7.10.4",
+        "@babel/plugin-transform-runtime": "^7.11.0",
+        "@babel/plugin-transform-shorthand-properties": "^7.10.4",
+        "@babel/preset-env": "^7.11.0",
+        "@babel/preset-typescript": "^7.10.4",
+        "@babel/register": "^7.10.5",
+        "@babel/runtime": "^7.11.2",
+        "@types/codemirror": "^0.0.97",
+        "@types/node": "^14.6.0",
+        "babel-loader": "^8.1.0",
+        "babel-plugin-root-import": "^6.5.0",
+        "cross-env": "^7.0.2",
+        "css-loader": "^4.2.1",
+        "html-webpack-plugin": "^4.3.0",
+        "mini-css-extract-plugin": "^0.10.0",
+        "optimize-css-assets-webpack-plugin": "^5.0.3",
+        "source-map-loader": "^1.0.1",
+        "terser-webpack-plugin": "^4.1.0",
+        "typescript": "^3.9.7",
+        "webpack": "^4.44.1",
+        "webpack-cli": "^3.3.12",
+        "webpack-dev-server": "^3.11.0"
+    },
+
+    "engines": {
+        "node": ">=14"
+    },
+
+    "browerslist": [
+        "> 0.5%",
+        "last 2 versions",
+        "firefox esr",
+        "not dead"
+    ]
+}

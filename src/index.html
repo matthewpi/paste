@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Branding -->
+        <title>Paste</title>
+        <!-- END Branding -->
+
+        <!-- Meta -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- END Meta -->
+
+        <!-- Styles -->
+        <%= htmlWebpackPlugin.tags.headTags %>
+        <!-- END Styles -->
+
+        <!-- Scripts -->
+        <script>
+            function dropdown() {
+                return {
+                    visible: false,
+
+                    mode: "Plain Text",
+
+                    modes: [
+                        { name: "C", mime: "text/x-csrc", mode: "clike", ext: [ "c", "h", "ino" ] },
+                        { name: "C++", mime: "text/x-c++src", mode: "clike", ext: [ "cpp", "c++", "cc", "cxx", "hpp", "h++", "hh", "hxx" ], alias: [ "cpp" ] },
+                        { name: "C#", mime: "text/x-csharp", mode: "clike", ext: [ "cs" ], alias: [ "csharp", "cs" ] },
+                        { name: "CSS", mime: "text/css", mode: "css", ext: [ "css" ] },
+                        { name: "CQL", mime: "text/x-cassandra", mode: "sql", ext: [ "cql" ] },
+                        { name: "Diff", mime: "text/x-diff", mode: "diff", ext: [ "diff", "patch" ] },
+                        { name: "Dockerfile", mime: "text/x-dockerfile", mode: "dockerfile", file: /^Dockerfile$/ },
+                        { name: "Git Markdown", mime: "text/x-gfm", mode: "gfm", file: /^(readme|contributing|history|license).md$/i },
+                        { name: "Golang", mime: "text/x-go", mode: "go", ext: [ "go" ] },
+                        { name: "HTML", mime: "text/html", mode: "htmlmixed", ext: [ "html", "htm", "handlebars", "hbs" ], alias: [ "xhtml" ] },
+                        { name: "HTTP", mime: "message/http", mode: "http" },
+                        { name: "JavaScript", mimes: [ "text/javascript", "text/ecmascript", "application/javascript", "application/x-javascript", "application/ecmascript" ], mode: "javascript", ext: [ "js" ], alias: [ "ecmascript", "js", "node" ] },
+                        { name: "JSON", mimes: [ "application/json", "application/x-json" ], mode: "javascript", ext: [ "json", "map" ], alias: [ "json5" ] },
+                        { name: "Lua", mime: "text/x-lua", mode: "lua", ext: [ "lua" ] },
+                        { name: "Markdown", mime: "text/x-markdown", mode: "markdown", ext: [ "markdown", "md", "mkd" ] },
+                        { name: "MariaDB", mime: "text/x-mariadb", mode: "sql" },
+                        { name: "MS SQL", mime: "text/x-mssql", mode: "sql" },
+                        { name: "MySQL", mime: "text/x-mysql", mode: "sql" },
+                        { name: "Nginx", mime: "text/x-nginx-conf", mode: "nginx", file: /nginx.*\.conf$/i },
+                        { name: "PHP", mimes: [ "text/x-php", "application/x-httpd-php", "application/x-httpd-php-open" ], mode: "php", ext: [ "php", "php3", "php4", "php5", "php7", "phtml" ] },
+                        { name: "Plain Text", mime: "text/plain", mode: "null", ext: [ "txt", "text", "conf", "def", "list", "log" ] },
+                        { name: "PostgreSQL", mime: "text/x-pgsql", mode: "sql" },
+                        { name: "Properties", mime: "text/x-properties", mode: "properties", ext: [ "properties", "ini", "in" ], alias: [ "ini", "properties" ] },
+                        { name: "Python", mime: "text/x-python", mode: "python", ext: [ "BUILD", "bzl", "py", "pyw" ], file: /^(BUCK|BUILD)$/ },
+                        { name: "Ruby", mime: "text/x-ruby", mode: "ruby", ext: [ "rb" ], alias: [ "jruby", "macruby", "rake", "rb", "rbx" ] },
+                        { name: "Rust", mime: "text/x-rustsrc", mode: "rust", ext: [ "rs" ] },
+                        { name: "Sass", mime: "text/x-sass", mode: "sass", ext: [ "sass" ] },
+                        { name: "SCSS", mime: "text/x-scss", mode: "css", ext: [ "scss" ] },
+                        { name: "Shell", mimes: [ "text/x-sh", "application/x-sh" ], mode: "shell", ext: [ "sh", "ksh", "bash" ], alias: [ "bash", "sh", "zsh" ], file: /^PKGBUILD$/ },
+                        { name: "SQL", mime: "text/x-sql", mode: "sql", ext: [ "sql" ] },
+                        { name: "SQLite", mime: "text/x-sqlite", mode: "sql" },
+                        { name: "TOML", mime: "text/x-toml", mode: "toml", ext: [ "toml" ] },
+                        { name: "TypeScript", mime: "application/typescript", mode: "javascript", ext: [ "ts" ], alias: [ "ts" ] },
+                        { name: "Vue", mimes: [ "script/x-vue", "text/x-vue" ], mode: "vue", ext: [ "vue" ] },
+                        { name: "XML", mimes: [ "application/xml", "text/xml" ], mode: "xml", ext: [ "xml", "xsl", "xsd", "svg" ], alias: [ "rss", "wsdl", "xsd" ] },
+                        { name: "YAML", mimes: [ "text/x-yaml", "text/yaml" ], mode: "yaml", ext: [ "yaml", "yml" ], alias: [ "yml" ] },
+                    ],
+
+                    search: "",
+
+                    filteredModes() {
+                        if (this.search === undefined || this.search === null || this.search.length < 1) {
+                            return this.modes;
+                        }
+
+                        return this.modes.filter((m) => {
+                            return m.name.toLowerCase().startsWith(this.search.toLowerCase());
+                        });
+                    },
+
+                    toggleDropdown() {
+                        this.visible = !this.visible;
+
+                        // If the dropdown is now visible, focus the search input.
+                        if (this.visible) {
+                            // This is wrapped in a timeout to ensure the dropdown div is actually visible before trying to focus the input.
+                            setTimeout(function () {
+                                document.getElementById("search").focus();
+                            }, 0);
+                        }
+                    },
+
+                    setMode(m)  {
+                        this.mode = m.name;
+                        this.visible = false;
+                        this.search = "";
+
+                        window.editor.setOption("mode", m.mode);
+                    },
+                };
+            }
+
+            function actions() {
+                return {
+                    readOnly: false,
+
+                    toggleReadOnly() {
+                        this.setReadOnly(!this.readOnly);
+                    },
+
+                    setReadOnly(state) {
+                        this.readOnly = state;
+
+                        if (this.readOnly) {
+                            window.editor.setOption("readOnly", true);
+                            window.editor.setOption("cursorBlinkRate", -1);
+                        } else {
+                            window.editor.setOption("readOnly", false);
+                            window.editor.setOption("cursorBlinkRate", 530)
+                        }
+                    },
+
+                    upload() {
+                        console.log("upload");
+                        console.log(window.editor.getValue());
+
+                        fetch("https://bin.dnf.wtf/documents", {
+                            method: "POST",
+                            body: window.editor.getValue(),
+
+                            headers: {
+                                "Content-Type": "text/plain",
+                                "X-CodeMirror-Mode": window.editor.getOption("mode"),
+                            },
+                        }).then((res) => {
+                            console.log(res);
+
+                            //window.history.pushState("", "", "/");
+                            //this.setReadOnly(true);
+                        }).catch((err) => {
+                            throw err;
+                        });
+                    },
+
+                    newFile() {
+                        console.log("new");
+                        window.editor.setValue("");
+
+                        window.history.pushState("", "", "/");
+
+                        this.setReadOnly(false);
+                    },
+
+                    duplicate() {
+                        console.log("duplicate");
+
+                        window.history.pushState("", "", "/");
+
+                        this.setReadOnly(false);
+                    },
+
+                    raw() {
+                        console.log("raw");
+                    },
+                };
+            }
+        </script>
+        <!-- END Scripts -->
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div class="header">
+                <div x-data="dropdown()" class="select-container">
+                    <div class="select-toggle" @click="toggleDropdown()">
+                        <span x-text="mode" style="font-size: 1rem; font-weight: 300; color: #E5E9F0; margin-right: auto; user-select: none;"></span>
+
+                        <svg viewBox="0 0 20 20" fill="currentColor" style="height: 1.5rem; width: 1.5rem; color: #E5E9F0;">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path>
+                        </svg>
+                    </div>
+
+                    <div x-show="visible" class="dropdown-wrapper" @click.away="visible = false">
+                        <div class="search-container">
+                            <input x-model="search" type="text" id="search" name="search" placeholder="Search.." autocomplete="off" tabindex="0" class="search-input">
+                        </div>
+
+                        <div class="dropdown-container">
+                            <template x-for="m in filteredModes()" :key="m.name">
+                                <div class="dropdown-item" @click="setMode(m)">
+                                    <span x-text="m.name" style="font-size: 0.875rem; font-weight: 300; color: #E5E9F0; user-select: none; cursor: pointer;"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-data="actions()" class="actions">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon" @click="upload()">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon" @click="newFile()">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon action-icon-disabled" @click="duplicate()">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                    </svg>
+
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon action-icon-disabled" @click="raw()">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <textarea id="editor" style="z-index: 0;"></textarea>
+        </div>
+
+        <!-- Scripts -->
+        <%= htmlWebpackPlugin.tags.bodyTags %>
+        <!-- END Scripts -->
+    </body>
+</html>

@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "strict": true,
+        "stripInternal": true,
+        "declaration": true,
+        "declarationMap": true,
+        "lib": [ "es6", "dom" ],
+        "module": "es2020",
+        "moduleResolution": "node",
+        "newLine": "lf",
+        "noEmit": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "sourceMap": true,
+        "target": "es6",
+        "typeRoots": [ "node_modules/@types" ],
+
+        "paths": {
+            "~/*": [
+                "./src/*"
+            ]
+        }
+    },
+
+    "include": [
+        "./src/**/*"
+    ],
+
+    "exclude": [
+        "/node_modules/"
+    ]
+}
