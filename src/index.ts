@@ -108,7 +108,7 @@ window.editor = CodeMirror.fromTextArea(<HTMLTextAreaElement> document.getElemen
 
     showCursorWhenSelecting: false,
 
-    autofocus: true,
+    autofocus: false,
 
     spellcheck: true,
     autocorrect: false,
@@ -126,4 +126,3 @@ window.editor = CodeMirror.fromTextArea(<HTMLTextAreaElement> document.getElemen
         cm.replaceSelection(spaces);
     },
 });*/
-

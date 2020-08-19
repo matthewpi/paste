@@ -24,10 +24,13 @@
                     const body = value.slice(i + "\n\n\n".length);
                     const mode = value.slice(0, i);
 
-                    window.editor.setValue(body);
+                    document.dispatchEvent(new CustomEvent("set-read-only", {
+                        detail: true,
+                    }));
                     document.dispatchEvent(new CustomEvent("set-mode", {
                         detail: mode,
                     }));
+                    window.editor.setValue(body);
                 });
             }
 
@@ -141,8 +144,12 @@
                             window.editor.setOption("cursorBlinkRate", -1);
                         } else {
                             window.editor.setOption("readOnly", false);
-                            window.editor.setOption("cursorBlinkRate", 530)
+                            window.editor.setOption("cursorBlinkRate", 530);
                         }
+                    },
+
+                    setReadOnlyFromEvent(e) {
+                        this.setReadOnly(e.detail);
                     },
 
                     upload() {
@@ -154,7 +161,6 @@
                                 "Content-Type": "text/plain",
                             },
                         }).then(async (res) => {
-                            console.log(res);
                             const body = await res.json();
 
                             window.history.pushState("", "", `/${body.id}`);
@@ -165,9 +171,7 @@
                     },
 
                     newFile() {
-                        console.log("new");
                         window.editor.setValue("");
-
                         window.history.pushState("", "", "/");
 
                         this.setReadOnly(false);
@@ -177,15 +181,18 @@
                     },
 
                     duplicate() {
-                        console.log("duplicate");
-
                         window.history.pushState("", "", "/");
 
                         this.setReadOnly(false);
                     },
 
                     raw() {
-                        console.log("raw");
+                        const url = new URL(window.location.href);
+                        if (url.pathname.length < 2) {
+                            return;
+                        }
+
+                        window.location = `https://bin.dnf.wtf/documents${url.pathname}`;
                     },
                 };
             }
@@ -193,6 +200,7 @@
             document.addEventListener("DOMContentLoaded", () => {
                 const url = new URL(window.location.href);
                 if (url.pathname.length < 2) {
+                    window.editor.focus();
                     return;
                 }
 
@@ -229,8 +237,8 @@
                     </div>
                 </div>
 
-                <div x-data="actions()" class="actions">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon" @click="upload()">
+                <div x-data="actions()" class="actions" @set-read-only.document="setReadOnlyFromEvent">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon" x-bind:class="(readOnly) ? 'action-icon-disabled' : ''" @click="upload()">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                     </svg>
 
@@ -238,11 +246,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
 
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon action-icon-disabled" @click="duplicate()">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon" x-bind:class="(!readOnly) ? 'action-icon-disabled' : ''" @click="duplicate()">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
                     </svg>
 
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon action-icon-disabled" @click="raw()">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="action-icon" x-bind:class="(!readOnly) ? 'action-icon-disabled' : ''" @click="raw()">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                     </svg>
                 </div>

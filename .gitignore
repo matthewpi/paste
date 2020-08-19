@@ -61,4 +61,5 @@ yarn-error.log
 
 # Other
 /dist
+.cargo-ok
 wrangler.toml
