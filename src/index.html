@@ -153,6 +153,10 @@
                     },
 
                     upload() {
+                        if (this.readOnly) {
+                            return;
+                        }
+
                         fetch(`/documents?mode=${window.editor.getOption("mode")}`, {
                             method: "POST",
                             body: window.editor.getValue(),
@@ -181,12 +185,20 @@
                     },
 
                     duplicate() {
+                        if (!this.readOnly) {
+                            return;
+                        }
+
                         window.history.pushState("", "", "/");
 
                         this.setReadOnly(false);
                     },
 
                     raw() {
+                        if (!this.readOnly) {
+                            return;
+                        }
+
                         const url = new URL(window.location.href);
                         if (url.pathname.length < 2) {
                             return;
