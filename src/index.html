@@ -16,6 +16,21 @@
 
         <!-- Scripts -->
         <script>
+            function loadPaste(id) {
+                fetch(`/documents/${id}?mode=body`).then(async (res) => {
+                    const value = await res.text();
+
+                    const i = value.indexOf("\n\n\n");
+                    const body = value.slice(i + "\n\n\n".length);
+                    const mode = value.slice(0, i);
+
+                    window.editor.setValue(body);
+                    document.dispatchEvent(new CustomEvent("set-mode", {
+                        detail: mode,
+                    }));
+                });
+            }
+
             function dropdown() {
                 return {
                     visible: false,
@@ -79,7 +94,7 @@
                         // If the dropdown is now visible, focus the search input.
                         if (this.visible) {
                             // This is wrapped in a timeout to ensure the dropdown div is actually visible before trying to focus the input.
-                            setTimeout(function () {
+                            setTimeout(() => {
                                 document.getElementById("search").focus();
                             }, 0);
                         }
@@ -91,6 +106,21 @@
                         this.search = "";
 
                         window.editor.setOption("mode", m.mode);
+                    },
+
+                    setModeFromEvent(e) {
+                        const mode = e.detail;
+
+                        for (let i = 0; i < this.modes.length; i++) {
+                            const m = this.modes[i];
+
+                            if (m.mode !== mode) {
+                                continue;
+                            }
+
+                            this.setMode(m);
+                            break;
+                        }
                     },
                 };
             }
@@ -116,22 +146,19 @@
                     },
 
                     upload() {
-                        console.log("upload");
-                        console.log(window.editor.getValue());
-
-                        fetch("https://bin.dnf.wtf/documents", {
+                        fetch(`/documents?mode=${window.editor.getOption("mode")}`, {
                             method: "POST",
                             body: window.editor.getValue(),
 
                             headers: {
                                 "Content-Type": "text/plain",
-                                "X-CodeMirror-Mode": window.editor.getOption("mode"),
                             },
-                        }).then((res) => {
+                        }).then(async (res) => {
                             console.log(res);
+                            const body = await res.json();
 
-                            //window.history.pushState("", "", "/");
-                            //this.setReadOnly(true);
+                            window.history.pushState("", "", `/${body.id}`);
+                            this.setReadOnly(true);
                         }).catch((err) => {
                             throw err;
                         });
@@ -144,6 +171,9 @@
                         window.history.pushState("", "", "/");
 
                         this.setReadOnly(false);
+                        document.dispatchEvent(new CustomEvent("set-mode", {
+                            detail: "null",
+                        }));
                     },
 
                     duplicate() {
@@ -159,6 +189,15 @@
                     },
                 };
             }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const url = new URL(window.location.href);
+                if (url.pathname.length < 2) {
+                    return;
+                }
+
+                loadPaste(url.pathname.substr(1));
+            });
         </script>
         <!-- END Scripts -->
     </head>
@@ -166,7 +205,7 @@
     <body>
         <div class="wrapper">
             <div class="header">
-                <div x-data="dropdown()" class="select-container">
+                <div x-data="dropdown()" class="select-container" @set-mode.document="setModeFromEvent">
                     <div class="select-toggle" @click="toggleDropdown()">
                         <span x-text="mode" style="font-size: 1rem; font-weight: 300; color: #E5E9F0; margin-right: auto; user-select: none;"></span>
 
