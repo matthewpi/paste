@@ -17,19 +17,18 @@
         <!-- Scripts -->
         <script>
             function loadPaste(id) {
-                fetch(`/documents/${id}?mode=body`).then(async (res) => {
-                    const value = await res.text();
-
-                    const i = value.indexOf("\n\n\n");
-                    const body = value.slice(i + "\n\n\n".length);
-                    const mode = value.slice(0, i);
+                fetch(`/documents/${id}`).then(async (res) => {
+                    const body = await res.text();
+                    const mode = res.headers.get("X-CodeMirror-Mode");
 
                     document.dispatchEvent(new CustomEvent("set-read-only", {
                         detail: true,
                     }));
+
                     document.dispatchEvent(new CustomEvent("set-mode", {
                         detail: mode,
                     }));
+
                     window.editor.setValue(body);
                 });
             }
@@ -157,12 +156,15 @@
                             return;
                         }
 
-                        fetch(`/documents?mode=${window.editor.getOption("mode")}`, {
+                        const mode = window.editor.getOption("mode");
+
+                        fetch("/documents", {
                             method: "POST",
-                            body: window.editor.getValue(),
+                            body:   window.editor.getValue(),
 
                             headers: {
-                                "Content-Type": "text/plain",
+                                "Content-Type":      "text/plain",
+                                "X-CodeMirror-Mode": mode,
                             },
                         }).then(async (res) => {
                             const body = await res.json();
@@ -204,7 +206,7 @@
                             return;
                         }
 
-                        window.location = `https://bin.dnf.wtf/documents${url.pathname}`;
+                        window.location.pathname = `/documents${url.pathname}`;
                     },
                 };
             }
@@ -268,7 +270,7 @@
                 </div>
             </div>
 
-            <textarea id="editor" style="z-index: 0;"></textarea>
+            <textarea id="editor" style="display: none; z-index: 0;"></textarea>
         </div>
 
         <!-- Scripts -->
